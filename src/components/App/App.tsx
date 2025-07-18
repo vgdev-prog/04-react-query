@@ -1,14 +1,12 @@
 import { useState } from "react";
 import { toast, Toaster } from "react-hot-toast";
-import ReactPaginate from "react-paginate";
-import SearchBar from "../SearchBar/SearchBar.tsx";
+import Header from "../Header/Header.tsx";
 import MovieGrid from "../MovieGrid/MovieGrid.tsx";
 import type { Movie } from "../../types/movie.ts";
 import { useMoviesQuery } from "../../hooks/useMoviesQuery.ts";
 import Loader from "../Loader/Loader.tsx";
 import ErrorMessage from "../ErrorMessage/ErrorMessage.tsx";
 import MovieModal from "../MovieModal/MovieModal.tsx";
-import css from "./App.module.css";
 
 function App() {
     const [query, setQuery] = useState<string>("")
@@ -41,7 +39,12 @@ function App() {
     if (error) {
         return (
             <>
-                <SearchBar onSubmit={handleSubmit}/>
+                <Header 
+                    onSubmit={handleSubmit}
+                    totalPages={0}
+                    currentPage={1}
+                    onPageChange={handlePageChange}
+                />
                 {isLoading ? (<Loader/>) : (<ErrorMessage message={error.message}/>)}
                 <Toaster position="top-center"/>
             </>
@@ -57,24 +60,16 @@ function App() {
 
     return (
         <>
-            <SearchBar onSubmit={handleSubmit}/>
+            <Header 
+                onSubmit={handleSubmit}
+                totalPages={totalPages}
+                currentPage={page}
+                onPageChange={handlePageChange}
+            />
             {isLoading ? (<Loader/>) : (<MovieGrid
                 movies={movies}
                 onSelect={onSelect}
             />)}
-            {totalPages > 1 && (
-                <ReactPaginate
-                    pageCount={totalPages}
-                    pageRangeDisplayed={5}
-                    marginPagesDisplayed={1}
-                    onPageChange={handlePageChange}
-                    forcePage={page - 1}
-                    containerClassName={css.pagination}
-                    activeClassName={css.active}
-                    nextLabel="→"
-                    previousLabel="←"
-                />
-            )}
             {currentMovie && (
                 <MovieModal
                     movie={currentMovie}
