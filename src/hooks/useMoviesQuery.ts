@@ -1,11 +1,10 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { fetchMovie } from '../services/movieService.ts'
-import type { MovieSearchResponse } from "../types/movie.ts";
 
-export const useMoviesQuery = (query: string, page: number = 1) => {
-    return useQuery<MovieSearchResponse>({
+export const useMoviesQuery = (query: string, page: number = 1, options: { enabled: boolean, placeholderData: typeof keepPreviousData }) => {
+    return useQuery({
         queryKey: ['searchMovie', query, page],
         queryFn: () => fetchMovie(query, page),
-        enabled: !!query
+        ...options
     })
 }
